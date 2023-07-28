@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
 
@@ -8,6 +8,10 @@ function App() {
   const [showBarbarian, setShowBarbarian] = React.useState(false);
   const [showWizard, setShowWizard] = React.useState(false);
   const [showBard, setShowBard] = React.useState(false);
+  const [total, setTotal] = React.useState(0);
+  const [skills, setSkills] = React.useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+  const [skillDisabled, setSkillDisabled] = React.useState(false);
+  var skill_sum = skills.reduce((partialSum, a) => partialSum + a, 0);
 
   const changeColor = (counters, s, d, c, i, w, h) => {
     if (counters[0] >= s && counters[1] >= d && counters[2] >= c && counters[3] >= i && counters[4] >= w && counters[5] >= h) {
@@ -26,6 +30,16 @@ function App() {
     }
   }
 
+  const getModifierValue = (modifier) => {
+    var index = ATTRIBUTE_LIST.indexOf(modifier);
+    var value = Math.floor((counters[index] - 10) / 2);
+    return value;
+  }
+
+  useEffect(() => {
+    setSkillDisabled(skill_sum >= total);
+  }, [skill_sum, total]);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -43,6 +57,15 @@ function App() {
                     const countersCopy = [...counters];
                     countersCopy[index] += 1;
                     setCounters(countersCopy);
+                    if (index === 3) {
+                      let temp = 0;
+                      temp = 4 * (Math.floor((counters[3] + 1 - 10) / 2)) + 10;
+                      if (temp >= 0) {
+                        setTotal(temp)
+                      } else {
+                        setTotal(0)
+                      }
+                    }
                   }}>
                   +
                 </button>
@@ -51,6 +74,15 @@ function App() {
                     const countersCopy = [...counters];
                     countersCopy[index] -= 1;
                     setCounters(countersCopy);
+                    if (index === 3) {
+                      let temp = 0;
+                      temp = 4 * (Math.floor((counters[3] - 1 - 10) / 2)) + 10;
+                      if (temp >= 0) {
+                        setTotal(temp)
+                      } else {
+                        setTotal(0)
+                      }
+                    }
                   }}>
                   -
                 </button>
@@ -111,6 +143,33 @@ function App() {
               <p>Charisma: 14</p>
             </div>
           )}
+        </div>
+        <div>
+          <p> Total skills point available: {total}</p>
+          {skills.map((value, index) => (
+            <div key={SKILL_LIST[index]["name"]}>
+              <p>
+                {SKILL_LIST[index]["name"]} - points: {value}
+                <button
+                  disabled={skillDisabled}
+                onClick={() => {
+                  const skillCopy = [...skills];
+                  skillCopy[index] += 1;
+                  setSkills(skillCopy);
+                }}>
+                +
+              </button>
+              <button onClick={() => {
+                const skillCopy = [...skills];
+                skillCopy[index] -= 1;
+                setSkills(skillCopy);
+              }}>
+                -
+                </button>
+                modifier ({SKILL_LIST[index]["attributeModifier"]}): {getModifierValue(SKILL_LIST[index]["attributeModifier"])} total: {getModifierValue(SKILL_LIST[index]["attributeModifier"]) + value}
+                </p>
+            </div>
+          ))}
         </div>
       </section>
     </div>
