@@ -11,7 +11,9 @@ function App() {
   const [total, setTotal] = React.useState(0);
   const [skills, setSkills] = React.useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
   const [skillDisabled, setSkillDisabled] = React.useState(false);
+  const [counterDisabled, setCounterDisabled] = React.useState(false);
   var skill_sum = skills.reduce((partialSum, a) => partialSum + a, 0);
+  var counter_sum = counters.reduce((partialSum, a) => partialSum + a, 0);
 
   const changeColor = (counters, s, d, c, i, w, h) => {
     if (counters[0] >= s && counters[1] >= d && counters[2] >= c && counters[3] >= i && counters[4] >= w && counters[5] >= h) {
@@ -39,6 +41,10 @@ function App() {
   useEffect(() => {
     setSkillDisabled(skill_sum >= total);
   }, [skill_sum, total]);
+
+  useEffect(() => {
+    setCounterDisabled(counter_sum >= 70);
+  }, [counter_sum]);
 
   useEffect(() => {
     fetch('https://recruiting.verylongdomaintotestwith.ca/api/{dengjuan-1122}/character', {
@@ -76,6 +82,7 @@ function App() {
               <p>
                 {ATTRIBUTE_LIST[index]}: {value} (modifier: {Math.floor((value - 10) / 2)})
                 <button
+                  disabled={counterDisabled}
                   onClick={() => {
                     const countersCopy = [...counters];
                     countersCopy[index] += 1;
