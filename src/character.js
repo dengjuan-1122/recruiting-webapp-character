@@ -9,7 +9,12 @@ function Character() {
   const [total, setTotal] = React.useState(0);
   const [skills, setSkills] = React.useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
   const [skillDisabled, setSkillDisabled] = React.useState(false);
-  const [counterDisabled, setCounterDisabled] = React.useState(false);
+    const [counterDisabled, setCounterDisabled] = React.useState(false);
+    const [skill, setSkill] = React.useState('Acrobatics');
+    const [input, setInput] = React.useState(0);
+    const [num, setNum] = React.useState(0);
+    const [showResult, setShowResult] = React.useState(false);
+    const [pass, setPass] = React.useState(false);
   var skill_sum = skills.reduce((partialSum, a) => partialSum + a, 0);
   var counter_sum = counters.reduce((partialSum, a) => partialSum + a, 0);
 
@@ -35,6 +40,50 @@ function Character() {
     var value = Math.floor((counters[index] - 10) / 2);
     return value;
   }
+    
+  const Dropdown = ({label, value, options, onChange}) => {
+    return (
+        <label>
+            {label}
+            <select value={value} onChange={onChange}>
+                {options.map((option) => (
+                    <option key={option.name} value={option.name}>{option.name}</option>
+            ))}
+            </select>
+        </label>
+    );
+  }
+    
+  const handleSkillChange = (e) => {
+    setSkill(e.target.value);
+  }
+    
+  const updateInput = (e) => {
+    setInput(e.target.value);
+  }
+    
+  const randomNumberInRange = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+    
+  const getValue = (skill) => {
+    var index = SKILL_LIST.findIndex(function (s) {
+        return s.name == skill
+    });
+    return skills[index];
+  }
+    
+  const handleClick = () => {
+    setNum(randomNumberInRange(1, 20));
+    setShowResult(true);
+    let value = getValue(skill);
+    if (value + num >= input) {
+        setPass(true);
+    } else {
+        setPass(false);
+    }
+    
+}
 
   useEffect(() => {
     setSkillDisabled(skill_sum >= total);
@@ -70,6 +119,24 @@ function Character() {
     return (
         <div>
             <section>
+                <div>
+                <p>Skill Check</p>
+                    <Dropdown
+                        label="skills"
+                        options={SKILL_LIST}
+                        value={skill}
+                        onChange={handleSkillChange}
+                    />
+                    <input value={input} onChange={e => updateInput(e)} />
+                    <button onClick={handleClick}>Roll</button>
+                    {showResult && (<div>
+                        <span> Skill: {skill} Value:{getValue(skill)}</span>
+                        <span> DC: {input} </span>
+                        <span> Rolled: {num} </span>
+                        {!pass && (<span> Result: Failure </span>)}
+                        {pass && (<span> Result: Success </span>)}
+                    </div>)}
+                </div>
             <div>
           Attributes
           {counters.map((value, index) => (
