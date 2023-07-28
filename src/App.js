@@ -37,7 +37,7 @@ function App() {
           {counters.map((value, index) => (
             <div key={ATTRIBUTE_LIST[index]}>
               <p>
-                {ATTRIBUTE_LIST[index]}: {value}
+                {ATTRIBUTE_LIST[index]}: {value} (modifier: {Math.floor((value - 10) / 2)})
                 <button
                   onClick={() => {
                     const countersCopy = [...counters];
