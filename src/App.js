@@ -40,6 +40,29 @@ function App() {
     setSkillDisabled(skill_sum >= total);
   }, [skill_sum, total]);
 
+  useEffect(() => {
+    fetch('https://recruiting.verylongdomaintotestwith.ca/api/{dengjuan-1122}/character', {
+      method: 'POST',
+      body: JSON.stringify({
+        counters: counters,
+        showBarbarian: showBarbarian,
+        showWizard: showWizard,
+        showBard: showBard,
+        skills: skills,
+        total: total,
+        skillDisabled: skillDisabled, 
+      }), 
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      .then((response) => {
+        response.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error))
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
